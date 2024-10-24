@@ -1,0 +1,61 @@
+<div class="parent-container">
+    <div class="bannerimage-contanier">
+        <img class="banner-img" [src]="inputQuestionnaire.bannerImage"/>
+    </div>
+    <div class="header-container">
+        <span class="header-text">{{inputQuestionnaire?.headerText}}</span>
+    </div>
+    <div class="form-container">
+        <form [formGroup]="questionnaireForm" (ngSubmit)="onSubmit()">
+            <div *ngFor="let question of inputQuestionnaire?.questions; let i =index" class="question-cube">
+                <div class="question-text">
+                    <span>{{i+1}}.</span>
+                    <label [for]="'question_'+i">{{question?.question}}</label>
+                </div>
+                <textarea *ngIf="question.questionType === 'QUESTION_TYPE.SUBJECTIVE_LONG'" 
+                    [id]="'question_' + i"
+                    [formControlName]="question?.questionId"
+                    rows="4" class="textarea" placeholder="Enter your answer here"></textarea>
+                <input *ngIf="question.questionType === 'QUESTION_TYPE.DATE'"
+                 [id]="'question_' + i"
+                 [formControlName]="question?.questionId"
+                 type="date"
+                 class="custom-date-picker"/>
+                 <div *ngIf="question.questionType === 'QUESTION_TYPE.OBJECTIVE'" 
+                    class="space-y-2">
+                    <div *ngFor="let option of question.options; let optIndex = index"
+                        class="radio-btn-size">
+                        <input [id]="'question_' + i + '_option_' + optIndex"
+                            [formControlName]="question?.questionId.toString()"
+                            type="radio"
+                            [value]="option"
+                            class="">
+                        <label class="" [for]="'question_' + i + '_option_' + optIndex">
+                            {{ option }}
+                        </label>
+                    </div>
+                </div>
+                <div *ngIf="questionnaireForm.get(i.toString())?.errors && 
+                    questionnaireForm.get(i.toString())?.touched"
+                    class="text-red">
+                    Please answer this question
+                </div>
+                <div class="divider"></div>
+            </div>
+            <button type="submit" 
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Submit
+            </button>
+        </form>
+        <div class="modal-backdrop" (click)="closeModal()" *ngIf="isVisible">
+            <div class="modal" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <h4>Assessment successfully taken</h4>
+                </div>
+                <div class="modal-body">
+                    <button (click)="closeModal()">done</button>
+                </div>
+                </div>
+            </div>
+    </div>
+</div>
